@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cloud Migration Simulator</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Cloud migration simulator</h1>
+    <p class="subtitle">Legacy monolith vs AWS-migrated architecture — live, side by side</p>
+  </header>
+
+  <section class="status-bar">
+    <div class="status-pill" id="legacy-status"><span class="dot"></span>Legacy server</div>
+    <div class="status-pill" id="migrated-status"><span class="dot"></span>Migrated server</div>
+  </section>
+
+  <main class="columns">
+
+    <div class="column legacy">
+      <h2>Legacy <span class="badge">local disk + flat file</span></h2>
+
+      <div class="card">
+        <h3>Upload a file</h3>
+        <input type="file" id="legacy-file" />
+        <button onclick="uploadFile('legacy')">Upload</button>
+        <div class="result" id="legacy-upload-result"></div>
+      </div>
+
+      <div class="card">
+        <h3>Batch process (serial)</h3>
+        <label>Item count: <input type="number" id="legacy-count" value="10" min="1" max="50" /></label>
+        <button onclick="runBatch('legacy')">Run serial batch</button>
+        <div class="result" id="legacy-batch-result"></div>
+      </div>
+
+      <div class="card">
+        <h3>Uploaded records</h3>
+        <button onclick="loadRecords('legacy')">Refresh list</button>
+        <ul class="record-list" id="legacy-records"></ul>
+      </div>
+    </div>
+
+    <div class="column migrated">
+      <h2>Migrated <span class="badge">S3 + DynamoDB + SQS</span></h2>
+
+      <div class="card">
+        <h3>Upload a file</h3>
+        <input type="file" id="migrated-file" />
+        <button onclick="uploadFile('migrated')">Upload</button>
+        <div class="result" id="migrated-upload-result"></div>
+      </div>
+
+      <div class="card">
+        <h3>Batch process (async, parallel workers)</h3>
+        <label>Item count: <input type="number" id="migrated-count" value="10" min="1" max="50" /></label>
+        <button onclick="runBatch('migrated')">Enqueue batch</button>
+        <div class="result" id="migrated-batch-result"></div>
+        <p class="hint">Watch your <code>start:worker</code> terminal to see items processed in parallel.</p>
+      </div>
+
+      <div class="card">
+        <h3>Lookup (cache demo)</h3>
+        <input type="text" id="lookup-id" placeholder="paste a record id from an upload above" />
+        <button onclick="doLookup()">Lookup</button>
+        <div class="result" id="lookup-result"></div>
+        <p class="hint">Click twice with the same id — first call hits DynamoDB, second call hits the in-memory cache.</p>
+      </div>
+
+      <div class="card">
+        <h3>Records in DynamoDB</h3>
+        <button onclick="loadRecords('migrated')">Refresh list</button>
+        <ul class="record-list" id="migrated-records"></ul>
+      </div>
+    </div>
+
+  </main>
+
+  <section class="compare">
+    <h2>Serial vs parallel comparison</h2>
+    <button onclick="runComparison()">Run both batch jobs and compare</button>
+    <div id="compare-result" class="compare-result"></div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

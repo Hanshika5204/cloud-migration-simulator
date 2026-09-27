@@ -1,0 +1,5 @@
+node_modules/
+.localstack-data/
+legacy/storage/
+legacy/db.json
+.env

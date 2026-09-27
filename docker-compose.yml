@@ -1,0 +1,12 @@
+services:
+  localstack:
+    image: localstack/localstack:3.0
+    container_name: migration-sim-localstack
+    ports:
+      - "4566:4566" # edge port -- all services (S3, DynamoDB, SQS) go through this
+    environment:
+      - SERVICES=s3,dynamodb,sqs
+      - DEBUG=1
+      - PERSISTENCE=1
+    volumes:
+      - "./.localstack-data:/var/lib/localstack"
